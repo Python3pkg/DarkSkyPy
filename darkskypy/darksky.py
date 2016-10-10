@@ -10,7 +10,7 @@ import requests
 from attrdict import Attrdict
 
 #Double check the naming convention for module,class,func stuff
-class darksky(object):
+class Darksky(object):
 
     base_url = 'https://api.darksky.net/forecast/'
 
@@ -47,7 +47,7 @@ class darksky(object):
         reply = _connect(base_url, **kwargs)
         jsonforecast = json.loads(reply)
 
-        self.forecast = Attrdict(jsonforecast)    
+        self.forecast = Attrdict(jsonforecast)
 
     def _connect(self, base_url, **kwargs):
         """
