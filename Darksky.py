@@ -7,21 +7,22 @@ import sys
 import os
 import json
 import requests
-from urllib.parse import urlencode
 
 #Double check the naming convention for module,class,func stuff
-class darksky():
+class Darksky(object):
 
     base_url = 'https://api.darksky.net/forecast/'
 
     #the api_key should be stored as an os.environment
     #instead of directly in the code
-    api_key = os.environ.get('DARKSKY_API_KEY')
+    API_KEY = os.environ.get('DARKSKY_API_KEY')
 
+#TODO
+#Need to add error catching for bad latlng or missing variables
     def __init__(self, location, **kwargs):
         self.latitude = location[0]
         self.longitude = location[1]
-        self.api_key = api_key if api_key else kwargs.get('key', api_key)
+        self.api_key = API_KEY if API_KEY else kwargs.get('key', None)
     #follow the formatting in https://darksky.net/dev/docs/forecast
         self.params = {
             'exclude': kwargs.get('exclude', None),
@@ -31,23 +32,23 @@ class darksky():
         }
         if self.api_key is None:
             raise KeyError('Missing API Key')
+
         self.get_forecast(
-            self.base_url,
+            base_url,
+            apikey=self.api_key
             latitude=self.latitude,
             longitude=self.longitude,
             params=self.params
         )
 
-    def get_forecast(self, url, **kwargs):
-        self.url = self._url_builder()
-        _connect(self.url, **kwargs)
+    def get_forecast(self, base_url, **kwargs):
+        reply = _connect(base_url, **kwargs)
+        self.forcast = json.loads(reply)
 
-    def _url_builder(self):
-        url = self.base_url + self.api_key = '/' + str(self.latitude).strip() + ','
-        str(self.longitude).strip()
-        return url
+        for key in self.forecast.keys():
+            setattr(self, key, self.forecast[key])
 
-    def _connect(self, url, **kwargs):
+    def _connect(self, base_url, **kwargs):
         """
         This function recieves the request url and it is used internaly to get
         the information via http.
@@ -56,6 +57,8 @@ class darksky():
         Raises KeyError if headers are not present.
         Raises HTTPError if responde code is not 200.
         """
+        url = base_url + '{apikey}/{latitude},{longitude}'.format(**kwargs)
+
         headers = {'Accept-Encoding': 'gzip, deflate'}
         try:
             r = requests.get(url, headers=headers, params=self.params, timeout=60)
@@ -75,10 +78,10 @@ class darksky():
             self.x_forecast_api_calls = r.headers['X-Forecast-API-Calls']
             self.x_responde_time = r.headers['X-Response-Time']
         except KeyError as kerr:
-            print('Warning: Could not get headers. %s') % kerr
+            print('Warning: Could not get headers.{0}').format(kerr)
 
         if r.status_code is not 200:
             raise requests.exceptions.HTTPError('Bad response')
 
         self.raw_response = r.text
-        return self.raw_respons
+        return self.raw_response
