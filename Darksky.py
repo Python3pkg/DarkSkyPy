@@ -7,19 +7,21 @@ import sys
 import os
 import json
 import requests
+from attrdict import Attrdict
 
 #Double check the naming convention for module,class,func stuff
-class Darksky(object):
+class darksky(object):
 
     base_url = 'https://api.darksky.net/forecast/'
 
-    #the api_key should be stored as an os.environment
-    #instead of directly in the code
-    API_KEY = os.environ.get('DARKSKY_API_KEY')
 
 #TODO
 #Need to add error catching for bad latlng or missing variables
     def __init__(self, location, **kwargs):
+    #the api_key should be stored as an os.environment
+    #instead of directly in the code
+        API_KEY = os.environ.get('DARKSKY_API_KEY')
+
         self.latitude = location[0]
         self.longitude = location[1]
         self.api_key = API_KEY if API_KEY else kwargs.get('key', None)
@@ -43,10 +45,9 @@ class Darksky(object):
 
     def get_forecast(self, base_url, **kwargs):
         reply = _connect(base_url, **kwargs)
-        self.forcast = json.loads(reply)
+        jsonforecast = json.loads(reply)
 
-        for key in self.forecast.keys():
-            setattr(self, key, self.forecast[key])
+        self.forecast = Attrdict(jsonforecast)    
 
     def _connect(self, base_url, **kwargs):
         """
