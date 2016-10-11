@@ -28,7 +28,7 @@ Get the current temperature and precipitation probability:
 >>> current_temp = ds.forecast.currently.temperature
 >>> print('Temperature:', current_temp)
 Temperature: 11.07
->>> print('Precipitation Probability:', ds.currently.precipProbability)
+>>> print('Precipitation Probability:', ds.forecast.currently.precipProbability)
 Precipitation Probability: 0.29
 ```
 ####Function:

@@ -4,13 +4,13 @@ from setuptools import setup
 # Completely rewritten to improve reability
 
 setup(name='darkskypy',
-      version='0.0',
-      description='A different wrapper to access weather data provided by DarkSky.net',
+      version='0.1',
+      description='A different python wrapper to access weather data provided by DarkSky.net',
       url='https://github.com/mattbox/DarkSkyPy',
       author='mattbox',
       author_email='mattbox@noreply.github.com',
       license='MIT',
-      packages=['darksky'],
+      py_modules=['darkskypy.darksky'],
       install_requires=[
           'requests',
           'attrdict'
