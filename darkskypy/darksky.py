@@ -8,7 +8,7 @@ to recieves a utf-8-encoded, JSON-formmated object.
 import sys
 import os
 import requests
-from attrdict import Attrdict
+from attrdict import AttrDict
 
 # Double check the naming convention for module,class,func stuff
 
@@ -24,7 +24,7 @@ class DarkSky(object):
     self.json           - json decoded output equivalent to json.loads(...)
     self.forecast       - attrdict object
 
-    
+
     """
 
     base_url = 'https://api.darksky.net/forecast/'
@@ -47,22 +47,22 @@ class DarkSky(object):
             'exclude': kwargs.get('exclude', None),
             'extend': kwargs.get('extend', None),
             'lang': kwargs.get('lang', 'en'),
-            'units': Kwargs.get('units', 'auto'),
+            'units': kwargs.get('units', 'auto'),
         }
         if self.api_key is None:
             raise KeyError('Missing API Key')
 
         self.get_forecast(
             self.base_url,
-            apikey=self.api_key
+            apikey=self.api_key,
             latitude=self.latitude,
             longitude=self.longitude,
-            params=self.params
+            params=self.params,
         )
 
     def get_forecast(self, base_url, **kwargs):
-        reply = _connect(base_url, **kwargs)
-        self.forecast = Attrdict(reply)
+        reply = self._connect(base_url, **kwargs)
+        self.forecast = AttrDict(reply)
 
     def _connect(self, base_url, **kwargs):
         """
