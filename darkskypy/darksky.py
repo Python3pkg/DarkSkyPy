@@ -1,31 +1,48 @@
 # -*- coding: utf-8 -*-
 """
-recieves the api key and configures to build the request url.
+This is the core module, recieves the api key, latitude, longitude,
+and optional parameters. It builds the request url, makes a HTTP request
+to recieves a utf-8-encoded, JSON-formmated object.
 """
 
 import sys
 import os
-import json
 import requests
 from attrdict import Attrdict
 
-#Double check the naming convention for module,class,func stuff
-class Darksky(object):
+# Double check the naming convention for module,class,func stuff
+
+
+class DarkSky(object):
+    """
+    Requires that an API key has been set somewhere or is provided.
+    Also need to include the longitude and latitude for the location.
+
+    Some helpful attributes of DarkSky:
+
+    self.url            - the full request url
+    self.raw_response   - raw output from requests.get(...)
+    self.json           - json decoded output equivalent to json.loads(...)
+
+    self.forecast       - an attrdict object
+    """
 
     base_url = 'https://api.darksky.net/forecast/'
 
-
-#TODO
-#Need to add error catching for bad latlng or missing variables
+    # TODO
+    # Need to add error catching for bad latlng or missing variables
     def __init__(self, location, **kwargs):
-    #the api_key should be stored as an os.environment
-    #instead of directly in the code
+        """
+        """
+        # the api_key should be stored as an os.environment
+        # instead of directly in the code
         API_KEY = os.environ.get('DARKSKY_API_KEY')
 
         self.latitude = location[0]
         self.longitude = location[1]
         self.api_key = API_KEY if API_KEY else kwargs.get('key', None)
-    #follow the formatting in https://darksky.net/dev/docs/forecast
+    # See, https://darksky.net/dev/docs/forecast
+    # for optional request parameters
         self.params = {
             'exclude': kwargs.get('exclude', None),
             'extend': kwargs.get('extend', None),
@@ -36,7 +53,7 @@ class Darksky(object):
             raise KeyError('Missing API Key')
 
         self.get_forecast(
-            base_url,
+            self.base_url,
             apikey=self.api_key
             latitude=self.latitude,
             longitude=self.longitude,
@@ -45,24 +62,29 @@ class Darksky(object):
 
     def get_forecast(self, base_url, **kwargs):
         reply = _connect(base_url, **kwargs)
-        jsonforecast = json.loads(reply)
-
-        self.forecast = Attrdict(jsonforecast)
+        self.forecast = Attrdict(reply)
 
     def _connect(self, base_url, **kwargs):
         """
-        This function recieves the request url and it is used internaly to get
-        the information via http.
-        Returns the response content.
+        This function buids the url and makes an HTTP request. Returns the
+        JSON decoded object.
+
+        Raises the standard request exceptions
+
         Raises Timeout, TooManyRedirects, RequestException.
         Raises KeyError if headers are not present.
         Raises HTTPError if responde code is not 200.
+        Raises ValueError if JSON decoding fails
+
+        Darksy.net will raise a 404 error if latitude or longitude are missing
         """
+
         url = base_url + '{apikey}/{latitude},{longitude}'.format(**kwargs)
 
         headers = {'Accept-Encoding': 'gzip, deflate'}
         try:
-            r = requests.get(url, headers=headers, params=self.params, timeout=60)
+            r = requests.get(url, headers=headers,
+                             params=self.params, timeout=60)
             self.url = r.url
 
         except requests.exceptions.Timeout:
@@ -85,4 +107,8 @@ class Darksky(object):
             raise requests.exceptions.HTTPError('Bad response')
 
         self.raw_response = r.text
-        return self.raw_response
+        try:
+            self.json = r.json()
+        except ValueError as jerr:
+            raise jerr
+        return self.json
