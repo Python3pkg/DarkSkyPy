@@ -35,13 +35,9 @@ Precipitation Probability: 0.29
 
 * Read Data Points and Data blocks from the [DarkSky.net](https://darksky.net/dev/) API.
 
-Sets up a a hierarchical dictionary object that allows easy access to the
-currently, minutely, hourly, daily, etc. reports with their nested data.
-Data can be accessed directly by attributes as a  [AttrDict](https://pypi.python.org/pypi/attrdict/2.0.0) object. See Package for more information on how AttrDict works.
+Sets up a a hierarchical dictionary object that allows easy access to the currently, minutely, hourly, daily, etc. reports with their nested data. Data can be accessed directly by attributes as a [AttrDict](https://pypi.python.org/pypi/attrdict/2.0.0) object. See Package for more information on how AttrDict works.
 
-Please refer to the API docs [https://darksky.net/dev/docs/forecast](https://darksky.net/dev/docs/forecast)
-for better understanding of how the Forecast Request is structured and what
-parameters can be set.
+Please refer to the API docs [https://darksky.net/dev/docs/forecast](https://darksky.net/dev/docs/forecast) for better understanding of how the Forecast Request is structured and what parameters can be set.
 
 ####To Do:
 * Actually test this API
@@ -64,10 +60,7 @@ $ export DARKSKY_API_KEY=<API Key>
 ```
 
 **Initialize the DarkSky class**
-The location should be provided as a list of [latitude,longitude].
-Coordinates can be easily obtained from a Geocoding API such
-as [geocoder](https://github.com/DenisCarriere/geocoder).
-Optional Parameters are passed as keywords following the API doc.
+The location should be provided as a list of [latitude,longitude]. Coordinates can be easily obtained from a Geocoding API such as [geocoder](https://github.com/DenisCarriere/geocoder). Optional Parameters are passed as kwargs following the API doc.
 ```python
 import darkskypy
 import geocoder
@@ -81,77 +74,38 @@ ds = darkskypy.DarkSky(g.latlng, exclude='minutely,hourly', units='si')
 
 **Get Currently weather data for the requested location**
 ```python
-if fio.has_currently() is True:
-	currently = FIOCurrently.FIOCurrently(fio)
-	print('Currently')
-	for item in currently.get().keys():
-		print(item + ' : ' + unicode(currently.get()[item]))
+if ds.forecast.currently is True:
+	for element in ds.forecast.currently:
+		print(element + ' : ' + str(ds.forecast.currently[element]))
 	# Or access attributes directly
-	print(currently.temperature)
-	print(currently.humidity)
+	print(ds.forecast.currently.temperature)
+	print(ds.forecast.currently.humidity)
 else:
 	print('No Currently data')
 ```
-
-**Get Minutely weather data for the requested location**
-```python
-if fio.has_minutely() is True:
-	minutely = FIOMinutely.FIOMinutely(fio)
-	print('Minutely')
-	print('Summary:', minutely.summary)
-	print('Icon:', minutely.icon)
-
-	for minute in xrange(0, minutely.minutes()):
-		print('Minute', minute+1)
-		for item in minutely.get_minute(minute).keys():
-			print(item + ' : ' + unicode(minutely.get_minute(minute)[item]))
-
-		# Or access attributes directly for a given minute.
-		# minutely.minute_3_time would also work
-		print(minutely.minute_1_time)
-else:
-	print('No Minutely data')
-```
-
-
 **Get Daily weather data for the requested location**
-```python
-if fio.has_daily() is True:
-	daily = FIODaily.FIODaily(fio)
-	print('Daily')
-	print('Summary:', daily.summary)
-	print('Icon:', daily.icon)
+The data blocks for Minutely, hourly, and daily data are dictionary sequences that represent each time unit. (i.e. hourly: hours in day, Daily: days in week)
 
-	for day in range(0, daily.days()):
-		print('Day', day+1)
-		for item in daily.get_day(day).keys():
-			print(item + ' : ' + str(daily.get_day(day)[item]))
-		# Or access attributes directly for a given minute.
-		# daily.day_7_time would also work
-		print(daily.day_5_time)
+```python
+if ds.forecast.daily is True:
+	print('Summary:', ds.forecast.daily.summary)
+	print('Icon:', ds.forecast.daily.icon)
+  # these would relate to the whole Daily block i.e. "the week"
+
+	for day in ds.forecast.daily.data:
+    print('Day summary: '+ day.summary)
+    # prints the 'summary' for each day
+
+  print(ds.forecast.daily.data[0].summary)
+  #accessed directly
 else:
 	print('No Daily data')
 ```
 
-**Get Flags weather data for the requested location**
-```python
-if fio.has_flags() is True:
-	from pprint import pprint
-	flags = FIOFlags.FIOFlags(fio)
-	pprint(vars(flags))
-	# Get units directly
-	print(flags.units)
-else:
-	print('No Flags data')
-```
-
-**Get Alerts weather data for the requested location**
-It should work just like Flags and the other ones, but at the time I am writing this, I could not find a location with alerts to test on.
+**Alerts and Flags weather data** should work just like Flags and the other ones, but at the time I am writing this, I could not find a location with alerts to test on.
 
 **A note on time**
-The API returns time in unix time. Although this is a good computer format,
-it is not particulary _human-readable_
-So, to get a more _human-sane_ format, you can do something like this:
+The API returns time in unix time. Although this is a good computer format, it is not particulary _human-readable_. The datatime module can be used to get a more useful format.
 ```python
 import datetime
 

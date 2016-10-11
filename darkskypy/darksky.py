@@ -18,13 +18,13 @@ class DarkSky(object):
     Requires that an API key has been set somewhere or is provided.
     Also need to include the longitude and latitude for the location.
 
-    Some helpful attributes of DarkSky:
-
+    Some attributes of DarkSky:
     self.url            - the full request url
     self.raw_response   - raw output from requests.get(...)
     self.json           - json decoded output equivalent to json.loads(...)
+    self.forecast       - attrdict object
 
-    self.forecast       - an attrdict object
+    
     """
 
     base_url = 'https://api.darksky.net/forecast/'
