@@ -1,5 +1,9 @@
 DarkSkyPy - Python 3
 ============
+[![PyPI](https://img.shields.io/pypi/v/darkskypy.svg)](https://pypi.python.org/pypi/darkskypy/)
+[![PyPI](https://img.shields.io/pypi/pyversions/darkskypy.svg)](https://pypi.python.org/pypi/darkskypy/)
+[![Build Status](https://travis-ci.org/mattbox/DarkSkyPy.svg?branch=master)](https://travis-ci.org/mattbox/DarkSkyPy)
+
 A Different Python3 wrapper for the [DarkSky.net](https://www.darksky.net) API.
 
 Rewriting the API to reduce clutter and make obtaining data much more flexible. Based heavily off David Ervideira's forecastiopy.
