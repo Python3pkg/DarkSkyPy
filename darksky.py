@@ -8,6 +8,7 @@ to recieves a utf-8-encoded, JSON-formmated object.
 import sys
 import os
 import requests
+import requests.exceptions
 from attrdict import AttrDict
 
 # Double check the naming convention for module,class,func stuff
@@ -87,11 +88,11 @@ class DarkSky(object):
                              params=self.params, timeout=60)
             self.url = r.url
 
-        except requests.exceptions.Timeout:
+        except Timeout:
             print('Error: Timeout')
-        except requests.exceptions.TooManyRedirects:
+        except TooManyRedirects:
             print('Error: TooManyRedirects')
-        except requests.exceptions.RequestException as ex:
+        except RequestException as ex:
             print(ex)
             sys.exit(1)
 
@@ -104,7 +105,7 @@ class DarkSky(object):
             print('Warning: Could not get headers.{0}').format(kerr)
 
         if r.status_code is not 200:
-            raise requests.exceptions.HTTPError('Bad response')
+            raise HTTPError('Bad response')
 
         self.raw_response = r.text
         try:
