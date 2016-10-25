@@ -11,15 +11,16 @@ import requests
 import requests.exceptions
 from attrdict import AttrDict
 
-# Double check the naming convention for module,class,func stuff
-
+#TODO
+#Need to add error catching for bad latlng or missing variables
+#Better DocString
 
 class DarkSky(object):
     """
     Requires that an API key has been set somewhere or is provided.
     Also need to include the longitude and latitude for the location.
 
-    Some attributes of DarkSky:
+    Useful attributes of DarkSky:
     self.url            - the full request url
     self.raw_response   - raw output from requests.get(...)
     self.json           - json decoded output equivalent to json.loads(...)
@@ -30,8 +31,6 @@ class DarkSky(object):
 
     base_url = 'https://api.darksky.net/forecast/'
 
-    # TODO
-    # Need to add error catching for bad latlng or missing variables
     def __init__(self, location, **kwargs):
         """
         """
@@ -77,7 +76,7 @@ class DarkSky(object):
         Raises HTTPError if responde code is not 200.
         Raises ValueError if JSON decoding fails
 
-        Darksy.net will raise a 404 error if latitude or longitude are missing
+        Darksky.net will raise a 404 error if latitude or longitude are missing
         """
 
         url = base_url + '{apikey}/{latitude},{longitude}'.format(**kwargs)

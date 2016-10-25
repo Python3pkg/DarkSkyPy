@@ -39,7 +39,7 @@ Precipitation Probability: 0.29
 
 * Read Data Points and Data blocks from the [DarkSky.net](https://darksky.net/dev/) API.
 
-Sets up a a hierarchical dictionary object that allows easy access to the currently, minutely, hourly, daily, etc. reports with their nested data. Data can be accessed directly by attributes as a [AttrDict](https://pypi.python.org/pypi/attrdict/2.0.0) object. See Package for more information on how AttrDict works.
+Sets up a hierarchical dictionary object that allows easy access to the currently, minutely, hourly, daily, etc. reports with their nested data. Data can be accessed directly by attributes as a [AttrDict](https://pypi.python.org/pypi/attrdict/2.0.0) object. See Package for more information on how AttrDict works.
 
 Please refer to the API docs [https://darksky.net/dev/docs/forecast](https://darksky.net/dev/docs/forecast) for better understanding of how the Forecast Request is structured and what parameters can be set.
 
