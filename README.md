@@ -27,7 +27,7 @@ Get the coordinates of your location, let's say Lisbon:
 
 Get the current temperature and precipitation probability:
 ```python
->>> from darkskypy import DarkSky
+>>> from darksky import DarkSky
 >>> ds = DarkSky(Lisbon, key=YOUR_APY_KEY)
 >>> current_temp = ds.forecast.currently.temperature
 >>> print('Temperature:', current_temp)
@@ -71,7 +71,7 @@ import geocoder
 
 g = geocoder.google('Washington, DC')
 
-ds = darkskypy.DarkSky(g.latlng, exclude='minutely,hourly', units='si')
+ds = darksky.DarkSky(g.latlng, exclude='minutely,hourly', units='si')
 # g.latlng >>> [38.9071923, -77.0368707]
 # excludes minutely and hourly data blocks and reports in si units.
 ```
