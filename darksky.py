@@ -11,19 +11,16 @@ import requests
 import requests.exceptions
 from attrdict import AttrDict
 
-# Double check the naming convention for module,class,func stuff
-
-
 class DarkSky(object):
     """
     Requires that an API key has been set somewhere or is provided.
     Also need to include the longitude and latitude for the location.
 
     Some attributes of DarkSky:
-    self.url            - the full request url
-    self.raw_response   - raw output from requests.get(...)
-    self.json           - json decoded output equivalent to json.loads(...)
-    self.forecast       - attrdict object
+    self.url        - the full request url
+    self.json       - json decoded output equivalent to json.loads(...)
+    self.header     - dict of the HTTP Header
+    self.forecast   - attrdict object
 
 
     """
@@ -36,12 +33,14 @@ class DarkSky(object):
         """
         """
         # the api_key should be stored as an os.environment
-        # instead of directly in the code
         API_KEY = os.environ.get('DARKSKY_API_KEY')
 
         self.latitude = location[0]
         self.longitude = location[1]
         self.api_key = API_KEY if API_KEY else kwargs.get('key', None)
+        if self.api_key is None:
+            raise KeyError('Missing API Key')
+
     # See, https://darksky.net/dev/docs/forecast
     # for optional request parameters
         self.params = {
@@ -50,8 +49,6 @@ class DarkSky(object):
             'lang': kwargs.get('lang', 'en'),
             'units': kwargs.get('units', 'auto'),
         }
-        if self.api_key is None:
-            raise KeyError('Missing API Key')
 
         self.get_forecast(
             self.base_url,
@@ -62,54 +59,39 @@ class DarkSky(object):
         )
 
     def get_forecast(self, base_url, **kwargs):
-        reply = self._connect(base_url, **kwargs)
+        try:
+            reply = self._connect(base_url, **kwargs)
+        except:
+            raise
+
         self.forecast = AttrDict(reply)
 
     def _connect(self, base_url, **kwargs):
         """
-        This function buids the url and makes an HTTP request. Returns the
-        JSON decoded object.
+        builds request url and makes an HTTP request.
+        Returns the JSON decoded object.
 
-        Raises the standard request exceptions
-
-        Raises Timeout, TooManyRedirects, RequestException.
-        Raises KeyError if headers are not present.
-        Raises HTTPError if responde code is not 200.
-        Raises ValueError if JSON decoding fails
-
+        If network problem raises request exceptions
+        (Timeout, ConnectionError, HTTPError, etc)
         Darksy.net will raise a 404 error if latitude or longitude are missing
         """
-
+        head = {'Accept-Encoding': 'gzip, deflate'}
         url = base_url + '{apikey}/{latitude},{longitude}'.format(**kwargs)
 
-        headers = {'Accept-Encoding': 'gzip, deflate'}
         try:
-            r = requests.get(url, headers=headers,
-                             params=self.params, timeout=60)
-            self.url = r.url
-
-        except Timeout:
-            print('Error: Timeout')
-        except TooManyRedirects:
-            print('Error: TooManyRedirects')
-        except RequestException as ex:
-            print(ex)
-            sys.exit(1)
-
-        # Response Headers see https://darksky.net/dev/docs/response
-        try:
-            self.cache_control = r.headers['Cache-Control']
-            self.x_forecast_api_calls = r.headers['X-Forecast-API-Calls']
-            self.x_responde_time = r.headers['X-Response-Time']
-        except KeyError as kerr:
-            print('Warning: Could not get headers.{0}').format(kerr)
-
-        if r.status_code is not 200:
-            raise HTTPError('Bad response')
-
-        self.raw_response = r.text
+            r = requests.get(url, headers=head, params=self.params, timeout=20)
+            r.raise_for_status()
+        except HTTPError:
+            raise
+        except RequestException as error:
+            print(error)
+            raise
         try:
             self.json = r.json()
-        except ValueError as jerr:
-            raise jerr
+        except ValueError:
+            raise
+        # HTTP response headers see https://darksky.net/dev/docs/response
+        self.headers = r.headers
+        self.url = r.url
+
         return self.json
