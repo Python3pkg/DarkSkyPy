@@ -11,6 +11,10 @@ import requests
 import requests.exceptions
 from attrdict import AttrDict
 
+#TODO
+#Need to add error catching for bad latlng or missing variables
+#Better DocString
+
 class DarkSky(object):
     """
     Requires that an API key has been set somewhere or is provided.
@@ -27,8 +31,6 @@ class DarkSky(object):
 
     base_url = 'https://api.darksky.net/forecast/'
 
-    # TODO
-    # Need to add error catching for bad latlng or missing variables
     def __init__(self, location, **kwargs):
         """
         """

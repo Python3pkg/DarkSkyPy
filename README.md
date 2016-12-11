@@ -27,7 +27,7 @@ Get the coordinates of your location, let's say Lisbon:
 
 Get the current temperature and precipitation probability:
 ```python
->>> from darkskypy import DarkSky
+>>> from darksky import DarkSky
 >>> ds = DarkSky(Lisbon, key=YOUR_APY_KEY)
 >>> current_temp = ds.forecast.currently.temperature
 >>> print('Temperature:', current_temp)
@@ -39,7 +39,7 @@ Precipitation Probability: 0.29
 
 * Read Data Points and Data blocks from the [DarkSky.net](https://darksky.net/dev/) API.
 
-Sets up a a hierarchical dictionary object that allows easy access to the currently, minutely, hourly, daily, etc. reports with their nested data. Data can be accessed directly by attributes as a [AttrDict](https://pypi.python.org/pypi/attrdict/2.0.0) object. See Package for more information on how AttrDict works.
+Sets up a hierarchical dictionary object that allows easy access to the currently, minutely, hourly, daily, etc. reports with their nested data. Data can be accessed directly by attributes as a [AttrDict](https://pypi.python.org/pypi/attrdict/2.0.0) object. See Package for more information on how AttrDict works.
 
 Please refer to the API docs [https://darksky.net/dev/docs/forecast](https://darksky.net/dev/docs/forecast) for better understanding of how the Forecast Request is structured and what parameters can be set.
 
@@ -71,7 +71,7 @@ import geocoder
 
 g = geocoder.google('Washington, DC')
 
-ds = darkskypy.DarkSky(g.latlng, exclude='minutely,hourly', units='si')
+ds = darksky.DarkSky(g.latlng, exclude='minutely,hourly', units='si')
 # g.latlng >>> [38.9071923, -77.0368707]
 # excludes minutely and hourly data blocks and reports in si units.
 ```
