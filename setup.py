@@ -4,7 +4,7 @@ from setuptools import setup
 # Completely rewritten to improve reability
 
 setup(name='darkskypy',
-      version='0.2.01',
+      version='0.3.1',
       description='A different python wrapper to access weather data provided by DarkSky.net',
       url='https://github.com/mattbox/DarkSkyPy',
       author='mattbox',
