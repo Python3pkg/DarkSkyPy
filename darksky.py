@@ -39,9 +39,9 @@ class DarkSky(object):
 
         self.latitude = location[0]
         self.longitude = location[1]
-        self.api_key = API_KEY if API_KEY else kwargs.get('key', None)
+        self.api_key = API_KEY if API_KEY else kwargs.get('apikey', None)
         if self.api_key is None:
-            raise KeyError('Missing API Key')
+            raise KeyError('Missing API Key. DarkSky(location, apikey=...')
 
     # See, https://darksky.net/dev/docs/forecast
     # for optional request parameters
